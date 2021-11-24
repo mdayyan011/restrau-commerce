@@ -1,12 +1,12 @@
-const express = require('express');
-const middlewares_obj = require('../middlewares/middlewares.js');
-const controllers_obj = require('../controllers/controllers.js');
+const express = require("express");
+const middlewares = require("../middlewares/middlewares");
+const customer_controller = require('../controllers/CustomerController');
 
-var app = express();
-app.use(middlewares_obj);
+const app = express();
+app.use(middlewares);
 
-app.use('/register', controllers_obj.user_registration);
-app.use('/login', controllers_obj.userLogin);
-app.use('/getUserData', controllers_obj.getUserData);
+//+++++++++++++ CUSTOMER REGISTRATION ++++++++++++++++++++
+app.use('/register/customer',customer_controller.customer_register);
 
-module.exports = app;
+
+module.exports= app;

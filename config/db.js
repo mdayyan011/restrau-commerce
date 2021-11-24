@@ -1,9 +1,9 @@
  db = {
-  master_db: {
+  master_customer_db: {
     host: 'localhost',
     database: 'customer_master_details',
   },
-  prod_db: {
+  product_db: {
     host: 'localhost',
     database: 'product_details',
   },
@@ -23,5 +23,6 @@
     host: 'localhost',
     database: 'order_details',
   },
+
 }
 module.exports = db;

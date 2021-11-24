@@ -1,15 +1,12 @@
-const express= require('express');
+const { urlencoded } = require("express");
+const express = require("express");
+const bodyParser=require("body-parser");
 const app = express();
-const bodyParser=require('body-parser');
-const DataRouter=require("./routes/routes.js");
+const DataRouter= require("./routes/routes");
+
+app.listen(3000,()=>{
+    console.log("Server is running at 3000");
+});
+
 app.use(bodyParser.json());
-// const message = require('./config/message.js')
-
-const db = require('./helpers/query.js')
-
-app.use('/',DataRouter);
-
-let server = app.listen('8000',function(req,res){
-  console.log("Server started at port 8000");
-})
-module.exports = server;
+app.use("/",DataRouter);

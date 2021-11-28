@@ -1,16 +1,36 @@
 const mysql = require('mysql2');
-const message_obj = require('../config/message.js'); 
-const utility_obj = require('../helpers/utility.js');
+const message = require('../config/message.js');
+const utility = require('../helpers/utility.js');
 const pool = require('../config/connection_pool.js');
 const db = require('../config/db.js');
 const url = require('url');
- 
 
-exports.getUserData = async function() {
+
+//**********************  I  N  S  E  R  T  **********************/
+
+exports.insertSingle = async (req, param) => {
+    let sql = 'INSERT INTO customer_master_details SET ?';
+    await pool.query("master_db", sql, [param]).catch(console.log);
+}
+
+
+
+//**********************   S  E  L  E  C  T  **********************/
+
+exports.getUserData = async ()=> {
     let sql = 'SELECT * FROM trial_table';
-    var details=await pool.query("master_db",sql); 
+    let details = await pool.query("master_db", sql);
     console.log(details);
     return details;
     // console.log(details);
-   }
-  
+}
+
+exports.getIdMobileEmailPass= async (field)=>{
+    let sql='SELECT customer_id,customer_mobile, customer_email, customer_password FROM customer_master_details WHERE ?';
+    let result = await pool.query("master_db",sql,[field]).catch(console.log);
+    if(!utility.checkEmpty(result))
+    {
+        result=result[0];
+    }
+    return result;
+}; 

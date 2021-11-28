@@ -2,6 +2,8 @@ const express=require("express");
 const utility= require('../helpers/utility');
 const message=require('../config/message');
 const dbquery= require('../helpers/query');
+const bcrypt = require('bcrypt'); 
+const methods= require('../helpers/methods');
 
 exports.customer_register=[async(req,res)=>{
     try{
@@ -66,11 +68,13 @@ exports.customer_register=[async(req,res)=>{
             response["status"]="error";
             response["msg"]=message.incorrect_password;
             return res.send(response); 
-        }
+        } 
+
+        customer_password = utility.encryptData(customer_password);
 
         let param={};
-        param['first_name']=first_name;
-        param['last_name']=last_name;
+        param['customer_first_name']=first_name;
+        param['customer_last_name']=last_name;
         param['customer_mobile']=customer_mobile;
         param['customer_email']=customer_email;
         param['customer_password']=customer_password;
@@ -80,15 +84,11 @@ exports.customer_register=[async(req,res)=>{
         param['customer_address_pincode']=customer_address_pincode;
         param['customer_address_state']=customer_address_state;
         param['customer_profile_pic']=customer_profile_pic;
-        //  dbquery.insert(req,param);
-        let result= await dbquery.getUserData();
-
- 
-
+         await dbquery.insertSingle(req,param);  
         response['status']='success';
         response['mssg']='Successfully registered';
-        response['data']=result;
-        return res.send(result);
+        // response['data']=result;
+        return res.send(response);
     }
     catch(error)
     {
@@ -97,3 +97,55 @@ exports.customer_register=[async(req,res)=>{
 }]
 
  
+exports.customer_login=[async(req,res)=>{
+    try{
+         //(mobile or email) and password
+         let input= req.body.inputData;
+         let customer_mobile = input.customer_mobile;
+         let customer_email = input.customer_email;
+         let customer_password = input.customer_password;
+         let response={};
+         if(utility.checkEmpty(customer_password))
+         {
+             response['status']='error';
+             response['mssg']='Enter password to login';
+             return res.send(response);
+         }
+         if(utility.checkEmpty(customer_mobile) && utility.checkEmpty(customer_email))
+         {
+             response['status']='error';
+             response['mssg']='Enter mobile or mobile to login';
+             return res.send(response);
+         }
+
+         if(!utility.checkEmpty(customer_mobile,customer_password))
+         {
+             let authentication_status= await methods.authentication_status(customer_mobile,customer_password);
+             if(!authentication_status)
+             {
+                 response['status']='error';
+                 response['mssg'] = 'Wrong Mobile or Password';
+                 return res.send(response);
+             }
+             let usr_id = await methods.user_id_mobile(customer_mobile);
+             return res.send(usr_id);
+         }
+
+         if(!utility.checkEmpty(customer_email,customer_password))
+         {
+             let authentication_status= await methods.authentication_status(customer_email,customer_password);
+             if(!authentication_status)
+             {
+                 response['status']='error';
+                 response['mssg'] = 'Wrong Mobile or Password';
+                 return res.send(response);
+             }
+             let usr_id = await methods.user_id_mobile(customer_mobile);
+             return res.send(usr_id);
+         }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+}]

@@ -1,6 +1,6 @@
 //true will only be returned if the check is not correct for us for example checkempty will be true when the value is empty and checkmobileformat will be true if the mobile format is not correct
-
-
+const constants=require('../config/constant');
+const bcrypt= require('bcrypt');
 
 exports.checkEmpty = function (data) {
   if (typeof data == "object") {
@@ -45,3 +45,9 @@ exports.checkPasswordFormat = function (password) {
   }
   else return false;
 };
+
+exports.encryptData = (data)=>{
+  const namak = bcrypt.genSaltSync(constants.namak); 
+  const uljha = bcrypt.hashSync(data, namak);
+  return uljha;
+}

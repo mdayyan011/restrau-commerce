@@ -9,7 +9,8 @@
     "express": "^4.17.1",
     "mysql2": "^2.3.3",
     "node": "^17.0.1",
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.15",
+    "sync-mysql": "^3.0.1"
   },
   "devDependencies": {},
   "scripts": {

@@ -1,12 +1,16 @@
-const customer_controller = require('../controllers/CustomerController');
-const utility = require('./utility.js');
-const message = require('../config/constant');
-const pool = require('../config/connection_pool');
+const mysql = require('mysql2');
+const message_obj = require('../config/message.js'); 
+const utility_obj = require('../helpers/utility.js');
+const pool = require('../config/connection_pool.js');
+const db = require('../config/db.js');
+const url = require('url');
+ 
 
-// ++++++++++++++****** I N S E R T ********++++++++++++++
-
-exports.insert = async (req,param)=>{
-    let sql = `INSERT INTO master_customer_db SET ?`;
-    let content = await pool.query("master_db", sql, [param]);
-    return content;
-}
+exports.getUserData = async function() {
+    let sql = 'SELECT * FROM trial_table';
+    var details=await pool.query("master_db",sql); 
+    console.log(details);
+    return details;
+    // console.log(details);
+   }
+  

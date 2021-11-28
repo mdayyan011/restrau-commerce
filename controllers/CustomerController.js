@@ -80,14 +80,15 @@ exports.customer_register=[async(req,res)=>{
         param['customer_address_pincode']=customer_address_pincode;
         param['customer_address_state']=customer_address_state;
         param['customer_profile_pic']=customer_profile_pic;
-        await dbquery.insert(req,param);
+        //  dbquery.insert(req,param);
+        let result= await dbquery.getUserData();
 
-
-
+ 
 
         response['status']='success';
         response['mssg']='Successfully registered';
-        return res.send(response);      
+        response['data']=result;
+        return res.send(result);
     }
     catch(error)
     {

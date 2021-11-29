@@ -100,8 +100,7 @@ exports.customer_register=[async(req,res)=>{
 exports.customer_login=[async(req,res)=>{
     try{
          //(mobile or email) and password
-         let input= req.body.inputData;
-         let customer_mobile = input.customer_mobile;
+         let input= req.body.inputData; 
          let customer_email = input.customer_email;
          let customer_password = input.customer_password;
          let response={};
@@ -111,24 +110,11 @@ exports.customer_login=[async(req,res)=>{
              response['mssg']='Enter password to login';
              return res.send(response);
          }
-         if(utility.checkEmpty(customer_mobile) && utility.checkEmpty(customer_email))
+         if(utility.checkEmpty(customer_email))
          {
              response['status']='error';
-             response['mssg']='Enter mobile or mobile to login';
+             response['mssg']='Enter email to login';
              return res.send(response);
-         }
-
-         if(!utility.checkEmpty(customer_mobile,customer_password))
-         {
-             let authentication_status= await methods.authentication_status(customer_mobile,customer_password);
-             if(!authentication_status)
-             {
-                 response['status']='error';
-                 response['mssg'] = 'Wrong Mobile or Password';
-                 return res.send(response);
-             }
-             let usr_id = await methods.user_id_mobile(customer_mobile);
-             return res.send(usr_id);
          }
 
          if(!utility.checkEmpty(customer_email,customer_password))
@@ -140,9 +126,11 @@ exports.customer_login=[async(req,res)=>{
                  response['mssg'] = 'Wrong Mobile or Password';
                  return res.send(response);
              }
-             let usr_id = await methods.user_id_mobile(customer_mobile);
+             let usr_id = await methods.user_id(customer_email);
              return res.send(usr_id);
          }
+
+          
     }
     catch(error)
     {

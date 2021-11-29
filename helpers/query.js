@@ -25,9 +25,9 @@ exports.getUserData = async ()=> {
     // console.log(details);
 }
 
-exports.getIdMobileEmailPass= async (field)=>{
-    let sql='SELECT customer_id,customer_mobile, customer_email, customer_password FROM customer_master_details WHERE ?';
-    let result = await pool.query("master_db",sql,[field]).catch(console.log);
+exports.getIdMobileEmailPassUsingEmail= async (email)=>{
+    let sql='SELECT customer_id,customer_mobile, customer_email, customer_password FROM customer_master_details WHERE customer_email=?';
+    let result = await pool.query("master_db",sql,[email]).catch(console.log);
     if(!utility.checkEmpty(result))
     {
         result=result[0];

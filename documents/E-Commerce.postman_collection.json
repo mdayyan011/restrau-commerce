@@ -1,0 +1,63 @@
+{
+	"info": {
+		"_postman_id": "fea0485e-4e79-4780-83d3-a4adf9069609",
+		"name": "E-Commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "cusomer_registration",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"inputData\": {\r\n        \"first_name\": \"Ankit\",\r\n        \"last_name\": \"Roy\",\r\n        \"customer_role\":0,\r\n        \"customer_mobile\": \"9255662237\",\r\n        \"customer_email\": \"ankitroy@gmail.co.inS\",\r\n        \"customer_password\": \"What579@#lakjf\",\r\n        \"customer_address_locality\": \"New Market\",\r\n        \"customer_address_landmark\": \" \",\r\n        \"customer_address_district\": \"Godda\",\r\n        \"customer_address_pincode\": \"814133\",\r\n        \"customer_address_state\": \"Jharkhand\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Base_URL}}/register/customer",
+					"host": [
+						"{{Base_URL}}"
+					],
+					"path": [
+						"register",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "customer_login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"inputData\": {\r\n        \"customer_email\": \"ankit@gmail.co.inS\",\r\n        \"customer_password\": \"What579@#lakjf\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Base_URL}}/login/customer",
+					"host": [
+						"{{Base_URL}}"
+					],
+					"path": [
+						"login",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

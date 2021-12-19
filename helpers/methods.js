@@ -27,6 +27,6 @@ exports.user_id = async (email)=>{
     let customer_email= data.customer_email;  
     let encrypted_mobile = await utility.encryptData(customer_mobile);
     let encrypted_email = await utility.encryptData(customer_email);
-    let usrid =  encrypted_mobile+":::"+encrypted_email+":::"+customer_id;
+    let usrid =  encrypted_mobile+":::"+customer_id+":::"+encrypted_email;
     return usrid;
 } 

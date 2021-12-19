@@ -35,16 +35,7 @@ exports.checkEmailFormat = function (email) {
   return true;
   else return false;
 };
-
-exports.checkPasswordFormat = function (password) {
-  const password_reg_exp = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-  
-  if (!password_reg_exp.test(password)) 
-  {
-  return true;
-  }
-  else return false;
-};
+ 
 
 exports.encryptData = (data)=>{
   const namak = bcrypt.genSaltSync(constants.namak); 

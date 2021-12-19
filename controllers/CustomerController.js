@@ -63,12 +63,7 @@ exports.customer_register=[async(req,res)=>{
             return res.send(response);
         }
 
-        if(utility.checkPasswordFormat(customer_password))
-        {
-            response["status"]="error";
-            response["msg"]=message.incorrect_password;
-            return res.send(response); 
-        } 
+         
 
         customer_password = utility.encryptData(customer_password);
 
@@ -125,9 +120,13 @@ exports.customer_login=[async(req,res)=>{
                  response['status']='error';
                  response['mssg'] = 'Wrong Mobile or Password';
                  return res.send(response);
-             }
-             let usr_id = await methods.user_id(customer_email);
-             return res.send(usr_id);
+                }
+                
+                let user_id = await methods.user_id(customer_email);
+             response['status']='success';
+             response['mssg']='';
+             response['user_id']=user_id;
+             return res.send(response);
          }
 
           

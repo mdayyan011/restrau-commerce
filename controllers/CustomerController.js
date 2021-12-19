@@ -62,8 +62,24 @@ exports.customer_register=[async(req,res)=>{
             response["msg"]=message.empty_password;
             return res.send(response);
         }
+        
+        //check for duplicacy of email and mobile
+        let email_duplicacy_data = await dbquery.getIdMobileEmailPassUsingEmail(customer_email); 
+        if(!utility.checkEmpty(email_duplicacy_data))
+        {
+            response["status"]="error";
+            response["msg"]="a user is already registered with the same email";
+            return res.send(response);
+        }
 
-         
+        let mobile_duplicacy_data = await dbquery.get_all_using_mobile(customer_mobile);
+        console.log(mobile_duplicacy_data);
+        if(!utility.checkEmpty(mobile_duplicacy_data))
+        {
+            response["status"]="error";
+            response["msg"]="a user is already registered with the same mobile";
+            return res.send(response);
+        }
 
         customer_password = utility.encryptData(customer_password);
 
@@ -79,7 +95,7 @@ exports.customer_register=[async(req,res)=>{
         param['customer_address_pincode']=customer_address_pincode;
         param['customer_address_state']=customer_address_state;
         param['customer_profile_pic']=customer_profile_pic;
-         await dbquery.insertSingle(req,param);  
+         await dbquery.insertSingle("customer_master_details",param);  
         response['status']='success';
         response['mssg']='Successfully registered';
         // response['data']=result;
@@ -118,18 +134,68 @@ exports.customer_login=[async(req,res)=>{
              if(!authentication_status)
              {
                  response['status']='error';
-                 response['mssg'] = 'Wrong Mobile or Password';
+                 response['mssg'] = 'Wrong Email or Password';
                  return res.send(response);
                 }
                 
-                let user_id = await methods.user_id(customer_email);
+            let user_id = await methods.user_id(customer_email);
+            //name, image
+            let details = await dbquery.getIdMobileEmailPassUsingEmail(customer_email);
+            console.log(details);
+            let profile_pic = details.customer_profile_pic;
+            let first_name = details.customer_first_name;
              response['status']='success';
              response['mssg']='';
-             response['user_id']=user_id;
+             response['data']={};
+             response['data']['user_id']=user_id;
+             response['data']['profile_pic']=profile_pic;
+             response['data']['first_name']=first_name;
              return res.send(response);
          }
 
           
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+}]
+
+
+exports.addfeedback=[async(req,res)=>{
+    try{
+        let user_id= req.headers.user_id;
+        let authenticate_token_status = await methods.authenticate_token_status(user_id);
+        let response={};
+        if(!authenticate_token_status)
+        {
+            response['status']="error";
+            response['mssg']='Wrong User Id!!!';
+            return res.send(response);
+        }
+        let id_arr = user_id.split(":::");
+        let customer_id = id_arr[1];
+        let input = req.body.inputData;
+        let product_id = input.product_id;
+        let product_rating = input.product_rating;
+        let product_feedback = input.product_feedback;
+        let params={};
+        params['customer_id']=customer_id;
+        params['product_id']=product_id;
+        params['product_rating']=product_rating;
+        params['product_feedback']=product_feedback;
+        dbquery.insertSingle("feedback_details",params);
+        
+        //add the rating to product table
+        let present_product_average_rating = await dbquery.present_product_average_rating(product_id);
+        present_product_average_rating=present_product_average_rating.product_average_rating;
+        present_product_average_rating=parseInt(present_product_average_rating);
+        let update_rating_to = ((present_product_average_rating+product_rating)/2);
+        let update_product_rating_table = dbquery.update_product_rating(update_rating_to,product_id);
+
+        response['status']='success';
+        response['mssg']='successfully inserted feedback in feedback table as well as in product table';
+        return res.send(response);
     }
     catch(error)
     {

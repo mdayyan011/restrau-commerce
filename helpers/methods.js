@@ -29,4 +29,29 @@ exports.user_id = async (email)=>{
     let encrypted_email = await utility.encryptData(customer_email);
     let usrid =  encrypted_mobile+":::"+customer_id+":::"+encrypted_email;
     return usrid;
-} 
+};
+
+exports.authenticate_token_status = async (user_id)=>{
+    let user_id_array = user_id.split(":::");
+    let encrypted_mobile = user_id_array[0];
+    let customer_id = user_id_array[1];
+    let encrypted_email = user_id_array[2];
+    let details = await query.get_all_using_id(customer_id);
+    if(utility.checkEmpty(details))
+    {
+        return false;
+    }
+    let correct_customer_mobile = details['customer_mobile'];
+    let correct_customer_email = details['customer_email'];
+    let mobile_status= await bcrypt.compare(correct_customer_mobile, encrypted_mobile);
+    if(!mobile_status)
+    {
+        return false;
+    }
+    let email_status = await bcrypt.compare(correct_customer_email,encrypted_email);
+    if(!email_status)
+    {
+        return false;
+    }
+    return true;
+}

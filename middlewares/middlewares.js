@@ -4,7 +4,7 @@ const url=require("url");
 const utility = require('../helpers/utility');
 const dbcon =require('../config/connection_pool.js');
 const constants = require('../config/constant.js');
-
+const methods = require('../helpers/methods')
 
 Route.use(async (req,res,next)=>{
     
@@ -30,7 +30,16 @@ Route.use(async (req,res,next)=>{
       }
       else
       {
-         next();//error yaha h ayyan
+        let user_id= req.headers.user_id;
+        let authenticate_token_status = await methods.authenticate_token_status(user_id);
+        let response={};
+        if(!authenticate_token_status)
+        {
+            response['status']="error";
+            response['mssg']='Wrong User Id!!!';
+            return res.send(response);
+        }
+         next();
       }
 })
 module.exports=Route;

@@ -165,14 +165,7 @@ exports.customer_login=[async(req,res)=>{
 exports.addfeedback=[async(req,res)=>{
     try{
         let user_id= req.headers.user_id;
-        let authenticate_token_status = await methods.authenticate_token_status(user_id);
         let response={};
-        if(!authenticate_token_status)
-        {
-            response['status']="error";
-            response['mssg']='Wrong User Id!!!';
-            return res.send(response);
-        }
         let id_arr = user_id.split(":::");
         let customer_id = id_arr[1];
         let input = req.body.inputData;
@@ -200,5 +193,55 @@ exports.addfeedback=[async(req,res)=>{
     catch(error)
     {
         console.log(error);
+    }
+}]
+
+exports.readfeedback = [async(req,res)=>{
+    try {
+        let user_id= req.headers.user_id;
+        let response={};
+        let id_arr = user_id.split(":::");
+        let customer_id = id_arr[1];
+        let input = req.body.inputData;
+        let max_limit = input.max_limit;
+        let feedback = await dbquery.read_feedback_to_limits(customer_id,max_limit);
+        // console.log(feedback);
+        if(utility.checkEmpty(feedback))
+        {
+            response["status"]="error";
+            response["mssg"]="No Feedback To Show";
+            return res.send(response);
+        }
+        response["status"]="success";
+        response["mssg"]="";
+        response["data"]=feedback;
+        return res.send(response);
+        
+    } catch (e) {
+        console.log(e);
+    }
+}]
+
+exports.removefeedback = [async(req,res)=>{
+    try {
+        let user_id= req.headers.user_id;
+        let id_arr = user_id.split(":::");
+        let response={};
+        let customer_id = id_arr[1];
+        let input = req.body.inputData;
+        let feedback_id=input.feedback_id;
+        let match_if_feeback_exist_for_user_id = await dbquery.check_if_feedback_id_and_user_id_is_right_or_not(customer_id,feedback_id);
+        if(utility.checkEmpty(match_if_feeback_exist_for_user_id))
+        {
+            response["status"]="error";
+            response["mssg"]="No Feedback is There For User Id";
+            return res.send(response);
+        }
+        dbquery.remove_feedback(customer_id,feedback_id);
+        response["status"]="success";
+        response["mssg"]="Deleted The Feedback Successfully";
+        return res.send(response);
+    } catch (e) {
+        console.log(e);
     }
 }]

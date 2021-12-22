@@ -66,6 +66,17 @@ exports.present_product_average_rating = async (product_id)=>{
     return result;
 }
 
+exports.read_feedback_to_limits = async (customer_id,max_limit)=>{
+    let sql = 'SELECT * FROM feedback_details WHERE customer_id= ? limit 0,?';
+    let result = await pool.query("master_db",sql,[customer_id,max_limit]);
+    return result;
+}
+
+exports.check_if_feedback_id_and_user_id_is_right_or_not = async (customer_id,feedback_id)=>{
+    let sql = 'SELECT * FROM feedback_details WHERE customer_id =? AND feedback_id=?';
+    let result = await pool.query("master_db",sql,[customer_id,feedback_id]);
+    return result;
+}
 //**********************   U P D A T E  **********************/
 
 exports.update_product_rating = async (rating,product_id)=>{
@@ -77,3 +88,11 @@ exports.update_product_rating = async (rating,product_id)=>{
     }
     return result;
 }
+
+
+//**********************   D E L E T E **********************/
+
+exports.remove_feedback = async (customer_id,feedback_id)=>{
+    let sql = 'DELETE FROM feedback_details WHERE customer_id= ? AND feedback_id= ?';
+    pool.query("master_db",sql,[customer_id,feedback_id]);
+    }

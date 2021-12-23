@@ -3,7 +3,7 @@ const utility= require('../helpers/utility');
 const message=require('../config/message');
 const dbquery= require('../helpers/query');
 const bcrypt = require('bcrypt'); 
-const methods= require('../helpers/methods');
+const methods= require('../helpers/methods'); 
 
 exports.customer_register=[async(req,res)=>{
     try{
@@ -108,9 +108,8 @@ exports.customer_register=[async(req,res)=>{
 }]
 
  
-exports.customer_login=[async(req,res)=>{
-    try{
-         //(mobile or email) and password
+exports.customer_login=async(req,res)=>{
+    try{ 
          let input= req.body.inputData; 
          let customer_email = input.customer_email;
          let customer_password = input.customer_password;
@@ -159,18 +158,18 @@ exports.customer_login=[async(req,res)=>{
     {
         console.log(error);
     }
-}]
+}
 
 
-exports.addfeedback=[async(req,res)=>{
+exports.addFeedback=[async(req,res)=>{
     try{
         let user_id= req.headers.user_id;
         let response={};
-        let id_arr = user_id.split(":::");
-        let customer_id = id_arr[1];
+        let customer_id = req.locals.customer_id;
         let input = req.body.inputData;
         let product_id = input.product_id;
         let product_rating = input.product_rating;
+        console.log(product_rating);
         let product_feedback = input.product_feedback;
         let params={};
         params['customer_id']=customer_id;
@@ -196,12 +195,11 @@ exports.addfeedback=[async(req,res)=>{
     }
 }]
 
-exports.readfeedback = [async(req,res)=>{
+exports.readFeedback = [async(req,res)=>{
     try {
         let user_id= req.headers.user_id;
         let response={};
-        let id_arr = user_id.split(":::");
-        let customer_id = id_arr[1];
+        let customer_id = req.locals.customer_id;
         let input = req.body.inputData;
         let max_limit = input.max_limit;
         let feedback = await dbquery.read_feedback_to_limits(customer_id,max_limit);
@@ -222,12 +220,11 @@ exports.readfeedback = [async(req,res)=>{
     }
 }]
 
-exports.removefeedback = [async(req,res)=>{
-    try {
+exports.removeFeedback = [async(req,res)=>{
+    try { 
         let user_id= req.headers.user_id;
-        let id_arr = user_id.split(":::");
         let response={};
-        let customer_id = id_arr[1];
+        let customer_id = req.locals.customer_id;
         let input = req.body.inputData;
         let feedback_id=input.feedback_id;
         let match_if_feeback_exist_for_user_id = await dbquery.check_if_feedback_id_and_user_id_is_right_or_not(customer_id,feedback_id);
@@ -244,4 +241,42 @@ exports.removefeedback = [async(req,res)=>{
     } catch (e) {
         console.log(e);
     }
+}]
+
+exports.readProduct = [async (req,res)=>{
+    let input = req.body.inputData;
+    let initial_limit = input.initial_limit;
+    let max_limit = input.max_limit;
+    let product_category= input.product_category;
+    let response={};
+    if(product_category == "All")
+    {
+    let details = await dbquery.get_all_products(initial_limit,max_limit);
+    response["status"]="success";
+    response["mssg"]="";
+    response["data"]=details;
+    return res.send(response);
+    }
+    let details = await dbquery.get_product_particular_category(product_category,initial_limit,max_limit);
+    response["status"]="success";
+    response["mssg"]="";
+    response["data"]=details;
+    return res.send(response);
+}]
+
+exports.addToCart = [async (req,res)=>{
+    let input = req.body.inputData;
+    let response={}; 
+    let product_id=input.product_id;
+    let qty=input.qty;
+    let product_avaialable = await dbquery.check_if_product_exist(product_id);
+    if(utility.checkEmpty(product_avaialable))
+    {
+        response["status"]="error";
+        response["mssg"]="product is currently unavailable";
+        return res.send(response);
+    }
+    let params={};
+    params["cart_product_id"]=product_id;
+    params["cart_customer_id"]=customer_id;
 }]

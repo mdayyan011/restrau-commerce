@@ -26,7 +26,7 @@ exports.getUserData = async ()=> {
 }
 
 exports.getIdMobileEmailPassUsingEmail = async (email)=>{
-    let sql='SELECT customer_id,customer_mobile, customer_email,customer_first_name,customer_profile_pic, customer_password FROM customer_master_details WHERE customer_email=?';
+    let sql='SELECT * FROM customer_master_details WHERE customer_email=?';
     let result = await pool.query("master_db",sql,[email]).catch(console.log);
     if(!utility.checkEmpty(result))
     {
@@ -76,7 +76,29 @@ exports.check_if_feedback_id_and_user_id_is_right_or_not = async (customer_id,fe
     let sql = 'SELECT * FROM feedback_details WHERE customer_id =? AND feedback_id=?';
     let result = await pool.query("master_db",sql,[customer_id,feedback_id]);
     return result;
+};
+
+exports.check_if_product_exist = async(product_id)=>{
+    let sql = 'SELECT * FROM product_details WHERE product_id=?';
+    let result = await pool.query("master_db",sql,[product_id]);
+    return result;
 }
+ 
+exports.get_all_products = async (initial_limit,final_limit)=>{
+    let sql = 'SELECT * FROM product_details LIMIT ?,?';
+    let result = await pool.query("master_db",sql,[initial_limit,final_limit]); 
+    return result;
+}
+
+exports.get_product_particular_category = async (product_category,initial_limit,final_limit)=>{
+    let sql = 'SELECT * FROM product_details WHERE product_category=? LIMIT ?,?';
+    let result = await pool.query("master_db",sql,[product_category,initial_limit,final_limit]); 
+    return result;
+}
+
+
+
+
 //**********************   U P D A T E  **********************/
 
 exports.update_product_rating = async (rating,product_id)=>{
@@ -96,3 +118,10 @@ exports.remove_feedback = async (customer_id,feedback_id)=>{
     let sql = 'DELETE FROM feedback_details WHERE customer_id= ? AND feedback_id= ?';
     pool.query("master_db",sql,[customer_id,feedback_id]);
     }
+    
+
+exports.remove_product = async (product_id)=>{
+        let sql = 'DELETE FROM product_details WHERE product_id= ? ';
+        pool.query("master_db",sql,[product_id]);
+        }
+ 

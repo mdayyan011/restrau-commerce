@@ -14,13 +14,15 @@ Route.use(async (req,res,next)=>{
         })
       } 
     
-      const user_id = req.headers.user_id;
-      const url_link = url.parse(req.url, true);
-      const path = url_link.pathname;
+      let user_id = req.headers.user_id;
+      let url_link = url.parse(req.url, true);
+      let path = url_link.pathname;
       let response={};
-      console.log("path ++++++++", path); 
+      req.locals = {};
+      req.locals.customer_id={};
+      console.log("req.locals ++++++++", req.locals); 
       if (utility.checkEmpty(user_id)) {
-        if (path === "/register/customer" || path === "/login/customer") {
+        if (path === "/register/customer" || path === "/login/customer" || path==="/admin/login" || path ==="/readProduct" || path==="/readFeedback") {
           next();
         } else {
           response['status']='error';
@@ -29,16 +31,18 @@ Route.use(async (req,res,next)=>{
         }
       }
       else
-      {
-        let user_id= req.headers.user_id;
+      { 
         let authenticate_token_status = await methods.authenticate_token_status(user_id);
-        let response={};
         if(!authenticate_token_status)
         {
             response['status']="error";
             response['mssg']='Wrong User Id!!!';
             return res.send(response);
         }
+        let user_id_arr = user_id.split(":::");
+        let customer_id = user_id_arr[1]; 
+        req.locals.customer_id = customer_id;
+        console.log(req.locals.customer_id);
          next();
       }
 })

@@ -7,18 +7,15 @@ app.use(middlewares);
  
 app.use('/register/customer',customer_controller.customer_register);
 app.use('/login/customer',customer_controller.customer_login);
-
-// ********************f e e d b a c k **************
 app.use('/addFeedback',customer_controller.addFeedback);
-app.use('/readFeedback',customer_controller.readFeedback);
+app.use('/readOwnFeedback',customer_controller.readOwnFeedback);
 app.use('/removeFeedback',customer_controller.removeFeedback);
-
-//****************** p r o d u c t */
 app.use('/readProduct',customer_controller.readProduct);
-
-//*************** C A R T */
+app.use('/readOthersFeedback',customer_controller.readOthersFeedback);
 app.use('/addToCart',customer_controller.addToCart)
-
+app.use('/countProductInCart',customer_controller.countProductInCart);
+app.use('/removeFromCart',customer_controller.removeFromCart);
+app.use('/readCart',customer_controller.readCart);
 
 //***************** A D M I N     R O U T E S*************/
 app.use('/admin/login',admin_controller.admin_login);

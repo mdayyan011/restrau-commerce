@@ -19,10 +19,9 @@ Route.use(async (req,res,next)=>{
       let path = url_link.pathname;
       let response={};
       req.locals = {};
-      req.locals.customer_id={};
-      console.log("req.locals ++++++++", req.locals); 
+      req.locals.customer_id={}; 
       if (utility.checkEmpty(user_id)) {
-        if (path === "/register/customer" || path === "/login/customer" || path==="/admin/login" || path ==="/readProduct" || path==="/readFeedback") {
+        if (path === "/register/customer" || path === "/login/customer" || path==="/admin/login" || path ==="/readProduct" || path==="/readOthersFeedback") {
           next();
         } else {
           response['status']='error';
@@ -41,8 +40,7 @@ Route.use(async (req,res,next)=>{
         }
         let user_id_arr = user_id.split(":::");
         let customer_id = user_id_arr[1]; 
-        req.locals.customer_id = customer_id;
-        console.log(req.locals.customer_id);
+        req.locals.customer_id = customer_id; 
          next();
       }
 })
